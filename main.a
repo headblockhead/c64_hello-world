@@ -1,0 +1,39 @@
+;****************************************
+;* Hello World in C64 Assembler         *
+;*                                      *
+;* Default ACME Configuration Assembler *
+;****************************************
+
+!to "main.o", cbm	; set output file and format
+
+*=$0801   ; Starting Address BASIC + 1 =&gt; SYS 2049
+ 
+  !byte $0C,$08,$40,$00,$9E,$20,$32,$30,$36,$32,$00,$00,$00 ; BASIC CODE: 1024 SYS 2062	
+ 
+  jsr $E544     ; Call the Function that clears the screen
+  ldx #$00      ; Put 0 in Register X (Index Register)
+
+  ; Switch into mixed case mode
+  lda #$17
+  ora $d018
+  sta $d018
+
+.write:
+
+  lda .hello,x  ; Read next character from Address at Label .hello + Offeset X
+  jsr $FFD2     ; CHROUT Subroutine, prints the Character loaded into Register A
+  inx           ; Increments Register X by 1
+  cpx #$0F      ; Compare if Value in Register X equals to 15
+  bne .write    ; If Value in Register X is not 15, go back to $033E
+.end:
+
+  ; Switch into uppercase mode
+;  lda #$15
+;  sta $d018
+
+  rts           ; Return to Basic  
+
+.hello: !byte 147 
+	!text "hELLO wORLD!"
+	!byte 13
+	!byte 10
